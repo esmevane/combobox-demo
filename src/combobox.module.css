@@ -1,18 +1,79 @@
 .launcher {
+  background-color: #000;
+  border: 1px solid #fff;
   width: min(72ch, 90vw);
 }
 
 .command {
+  display: grid;
+  grid-area-template: 'label' 1fr 'controls' 2fr;
+}
+
+.command label {
+  border-bottom: 1px solid #fff;
+  font-size: 1rem;
+  font-weight: 700;
+  opacity: 0.75;
+  text-transform: uppercase;
+  padding: 0.25rem 0.5rem;
+}
+
+.controls {
+  display: grid;
+  grid-template-columns: 1fr auto;
   align-items: center;
-  width: min(68ch, 87vw);
-  height: calc(var(--dimensions-md) / 6);
-  padding: 0 var(--spacing-xxs);
+}
+
+.controls input {
+  background-color: #333;
+  border: none;
+  color: #fff;
+  font-size: 1.1rem;
+  padding: 0.6em 1.2em;
+}
+
+.controls input:focus {
+  outline: none;
+}
+
+.controls button {
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1.1rem;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+.controls button:hover {
+  border-color: #646cff;
+}
+.controls button:focus,
+.controls button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
 }
 
 .focused {
-  outline: 2px solid var(--colors-primary-1000);
+  outline: 2px solid cyan;
 }
 
 .button:hover {
-  outline: 2px solid var(--colors-primary-1000);
+  outline: 2px solid cyan;
+}
+
+.launcher ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.entry {
+  background-color: #000;
+  font-size: 1.1rem;
+  padding: 0.6em 1.2em;
+}
+
+.selected {
+  background-color: #444;
 }
