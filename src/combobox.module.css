@@ -1,0 +1,18 @@
+.launcher {
+  width: min(72ch, 90vw);
+}
+
+.command {
+  align-items: center;
+  width: min(68ch, 87vw);
+  height: calc(var(--dimensions-md) / 6);
+  padding: 0 var(--spacing-xxs);
+}
+
+.focused {
+  outline: 2px solid var(--colors-primary-1000);
+}
+
+.button:hover {
+  outline: 2px solid var(--colors-primary-1000);
+}
