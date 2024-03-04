@@ -1,6 +1,7 @@
 import { useListBox, useOption } from "@react-aria/listbox";
 import { AriaComboBoxOptions, useComboBox } from "@react-aria/combobox";
 import { ComboBoxState, useComboBoxState } from "@react-stately/combobox";
+import { CollectionChildren } from "@react-types/shared";
 import { useButton } from "@react-aria/button";
 import { useFilter } from "@react-aria/i18n";
 import { useOverlay, DismissButton } from "@react-aria/overlays";
@@ -22,11 +23,24 @@ export function Combobox<
   "inputRef" | "buttonRef" | "listBoxRef" | "popoverRef"
 > & {
   open?: boolean;
-  onStateChange?: (state: ComboBoxState<GivenItem>) => void;
+  onStateChange?: (
+    state: Pick<
+      ComboBoxState<GivenItem>,
+      | "isFocused"
+      | "selectedItem"
+      | "selectedKey"
+      | "collection"
+      | "disabledKeys"
+      | "isOpen"
+      | "inputValue"
+      | "focusStrategy"
+      | "realtimeValidation"
+      | "displayValidation"
+    >
+  ) => void;
   dropdown?: boolean;
   label?: React.ReactNode;
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  children?: any;
+  children?: CollectionChildren<GivenItem>;
 }) {
   const filter = useFilter({ sensitivity: "base" });
   const state = useComboBoxState<GivenItem>({
@@ -56,10 +70,61 @@ export function Combobox<
     popoverRef
   );
 
+  // These values are "safe" to pull from the combobox state because they are
+  // friendly to serialization, don't have circular references, and have no
+  // functions.
+  //
+  const {
+    isFocused,
+    selectedItem,
+    selectedKey,
+    collection,
+    disabledKeys,
+    isOpen,
+    inputValue,
+    focusStrategy,
+    realtimeValidation,
+    displayValidation,
+  } = state;
+
   useEffect(() => {
-    onStateChange?.(state);
+    console.log("State change:", {
+      isFocused,
+      selectedItem,
+      selectedKey,
+      collection,
+      disabledKeys,
+      isOpen,
+      inputValue,
+      focusStrategy,
+      realtimeValidation,
+      displayValidation,
+    });
+    onStateChange?.({
+      isFocused,
+      selectedItem,
+      selectedKey,
+      collection,
+      disabledKeys,
+      isOpen,
+      inputValue,
+      focusStrategy,
+      realtimeValidation,
+      displayValidation,
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [state]);
+  }, [
+    collection,
+    disabledKeys,
+    displayValidation,
+    focusStrategy,
+    inputValue,
+    isFocused,
+    isOpen,
+    realtimeValidation,
+    selectedItem,
+    selectedKey,
+  ]);
 
   return (
     <div>
@@ -93,14 +158,23 @@ export function Combobox<
                 <div>
                   <div>
                     <div {...listbox.listBoxProps} ref={listBoxRef}>
-                      {[...state.collection].map((item, index) =>
-                        item ? (
-                          <Option<GivenItem>
-                            key={item.value?.id || index}
-                            id={item.value?.id || String(index)}
+                      {[...state.collection].map((item) =>
+                        item && item.value ? (
+                          <Option
+                            key={item.value.id}
+                            id={item.value.id}
                             state={state}
                           >
-                            {item.rendered}
+                            <div
+                              className={clsx(
+                                state.isFocused ? "focused" : null,
+                                state.selectedKey === item.value.id
+                                  ? "selected"
+                                  : null
+                              )}
+                            >
+                              {item.rendered}
+                            </div>
                           </Option>
                         ) : null
                       )}
