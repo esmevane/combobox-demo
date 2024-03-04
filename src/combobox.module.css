@@ -69,11 +69,12 @@
 }
 
 .entry {
+  cursor: pointer;
   background-color: #000;
   font-size: 1.1rem;
   padding: 0.6em 1.2em;
 }
 
 .selected {
-  background-color: #444;
+  background-color: #448;
 }

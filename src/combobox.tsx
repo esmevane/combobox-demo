@@ -10,9 +10,9 @@ import clsx from "clsx";
 
 import styles from "./combobox.module.css";
 
-export function Combobox<
-  GivenItem extends { id: string; name: string; render: React.ReactNode }
->({
+type OurItemFormat = { id: string; name: string; render: React.ReactNode };
+
+export function Combobox<GivenItem extends OurItemFormat>({
   open = false,
   dropdown = false,
   ...props
@@ -103,7 +103,7 @@ export function Combobox<
   );
 }
 
-function Option<GivenItem extends object>({
+function Option<GivenItem extends OurItemFormat>({
   id,
   state,
   children,
@@ -116,7 +116,7 @@ function Option<GivenItem extends object>({
   const className = clsx(
     styles.entry,
     option.isFocused ? styles.focused : null,
-    state.selectedKey === id ? styles.selected : null
+    option.isSelected ? styles.selected : null
   );
 
   return (
