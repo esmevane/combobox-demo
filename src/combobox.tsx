@@ -6,7 +6,7 @@ import { useButton } from "@react-aria/button";
 import { useFilter } from "@react-aria/i18n";
 import { useOverlay, DismissButton } from "@react-aria/overlays";
 import { FocusScope } from "@react-aria/focus";
-import { useEffect, useRef } from "react";
+import { useRef } from "react";
 import clsx from "clsx";
 
 import styles from "./combobox.module.css";
@@ -16,28 +16,12 @@ export function Combobox<
 >({
   open = false,
   dropdown = false,
-  onStateChange,
   ...props
 }: Omit<
   AriaComboBoxOptions<GivenItem>,
   "inputRef" | "buttonRef" | "listBoxRef" | "popoverRef"
 > & {
   open?: boolean;
-  onStateChange?: (
-    state: Pick<
-      ComboBoxState<GivenItem>,
-      | "isFocused"
-      | "selectedItem"
-      | "selectedKey"
-      | "collection"
-      | "disabledKeys"
-      | "isOpen"
-      | "inputValue"
-      | "focusStrategy"
-      | "realtimeValidation"
-      | "displayValidation"
-    >
-  ) => void;
   dropdown?: boolean;
   label?: React.ReactNode;
   children?: CollectionChildren<GivenItem>;
@@ -69,62 +53,6 @@ export function Combobox<
     },
     popoverRef
   );
-
-  // These values are "safe" to pull from the combobox state because they are
-  // friendly to serialization, don't have circular references, and have no
-  // functions.
-  //
-  const {
-    isFocused,
-    selectedItem,
-    selectedKey,
-    collection,
-    disabledKeys,
-    isOpen,
-    inputValue,
-    focusStrategy,
-    realtimeValidation,
-    displayValidation,
-  } = state;
-
-  useEffect(() => {
-    console.log("State change:", {
-      isFocused,
-      selectedItem,
-      selectedKey,
-      collection,
-      disabledKeys,
-      isOpen,
-      inputValue,
-      focusStrategy,
-      realtimeValidation,
-      displayValidation,
-    });
-    onStateChange?.({
-      isFocused,
-      selectedItem,
-      selectedKey,
-      collection,
-      disabledKeys,
-      isOpen,
-      inputValue,
-      focusStrategy,
-      realtimeValidation,
-      displayValidation,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    collection,
-    disabledKeys,
-    displayValidation,
-    focusStrategy,
-    inputValue,
-    isFocused,
-    isOpen,
-    realtimeValidation,
-    selectedItem,
-    selectedKey,
-  ]);
 
   return (
     <div>
@@ -158,26 +86,24 @@ export function Combobox<
                 <div>
                   <div>
                     <div {...listbox.listBoxProps} ref={listBoxRef}>
-                      {[...state.collection].map((item) =>
-                        item && item.value ? (
-                          <Option
-                            key={item.value.id}
-                            id={item.value.id}
-                            state={state}
+                      {[...state.collection].map((item, index) => (
+                        <Option
+                          key={item.value?.id}
+                          id={item.value?.id || String(index)}
+                          state={state}
+                        >
+                          <button
+                            {...item.props}
+                            className={clsx(
+                              state.selectedKey === item.value?.id
+                                ? "selected"
+                                : null
+                            )}
                           >
-                            <div
-                              className={clsx(
-                                state.isFocused ? "focused" : null,
-                                state.selectedKey === item.value.id
-                                  ? "selected"
-                                  : null
-                              )}
-                            >
-                              {item.rendered}
-                            </div>
-                          </Option>
-                        ) : null
-                      )}
+                            {item.rendered}
+                          </button>
+                        </Option>
+                      ))}
                       <DismissButton onDismiss={state.close} />
                     </div>
                   </div>

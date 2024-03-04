@@ -2,4 +2,14 @@
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
+  /* text-align: center; */
 }
+
+.focused {
+  text-decoration: underline;
+}
+
+.selected {
+  background-color: rgba(200, 200, 200, 0.3);
+}
+
