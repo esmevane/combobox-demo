@@ -1,12 +1,20 @@
 .launcher {
   background-color: #000;
   border: 1px solid #fff;
-  width: min(72ch, 90vw);
+  position: relative;
 }
 
 .command {
   display: grid;
   grid-area-template: 'label' 1fr 'controls' 2fr;
+}
+
+.overlay {
+  left: -50%;
+  top: 50%;
+  margin: 0 auto;
+  transform: translate3d(50%, 15%, 0);
+  width: 100%;
 }
 
 .command label {
